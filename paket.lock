@@ -7,7 +7,6 @@ NUGET
 GITHUB
   remote: fsharp/FAKE
   specs:
-    src/app/FakeLib/Git/CommandHelper.fs (2795f52947571f6f24617d506d777ef58869bceb)
     src/app/FakeLib/Globbing/Globbing.fs (2795f52947571f6f24617d506d777ef58869bceb)
   remote: fsprojects/Chessie
   specs:

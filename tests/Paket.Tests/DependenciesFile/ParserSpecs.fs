@@ -949,3 +949,13 @@ let ``should read config with combined strategy``() =
     cfg.Groups.[GroupName "Build"].Options.ResolverStrategy |> shouldEqual (Some ResolverStrategy.Max)
 
     cfg.Groups.[Constants.MainDependencyGroup].Sources |> shouldEqual [PackageSource.NugetSource "http://nuget.org/api/v2"]
+
+let paketGitConfig = """
+git@github.com:fsprojects/Paket.git
+"""
+
+[<Test>]
+let ``should read paket git config``() = 
+    let cfg = DependenciesFile.FromCode(paketGitConfig)
+    let gitSource = cfg.Groups.[Constants.MainDependencyGroup].RemoteFiles.Head
+    gitSource.GetCloneUrl() |> shouldEqual "git@github.com:fsprojects/Paket.git"
