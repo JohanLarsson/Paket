@@ -109,15 +109,26 @@ module LockFileSerializer =
                     if not (updateHasReported.Contains(GitHubLink)) then
                         yield "GITHUB"
                         updateHasReported.Remove (HttpLink "") |> ignore
+                        updateHasReported.Remove (GitLink "") |> ignore
                         updateHasReported.Remove GistLink |> ignore
                         updateHasReported.Add GitHubLink
                     yield sprintf "  remote: %s/%s" owner project
                     yield "  specs:"
+                | GitLink url ->
+                    if not (updateHasReported.Contains(GitLink(""))) then
+                        yield "GIT"
+                        updateHasReported.Remove GitHubLink |> ignore
+                        updateHasReported.Remove GistLink |> ignore
+                        updateHasReported.Add (GitLink "")
+                    yield sprintf "  remote: " + url
+                    yield "  specs:"
+               
                 | GistLink -> 
                     if not (updateHasReported.Contains(GistLink)) then
                         yield "GIST"
                         updateHasReported.Remove GitHubLink |> ignore
                         updateHasReported.Remove (HttpLink "") |> ignore
+                        updateHasReported.Remove (GitLink "") |> ignore
                         updateHasReported.Add GistLink
                     yield sprintf "  remote: %s/%s" owner project
                     yield "  specs:"
@@ -126,6 +137,7 @@ module LockFileSerializer =
                         yield "HTTP"
                         updateHasReported.Remove GitHubLink |> ignore
                         updateHasReported.Remove GistLink |> ignore
+                        updateHasReported.Remove (GitLink "") |> ignore
                         updateHasReported.Add (HttpLink "")
                     yield sprintf "  remote: " + url
                     yield "  specs:"

@@ -51,6 +51,11 @@ let getSHA1OfBranch origin owner project branch authKey =
             | None -> 
                 failwithf "Could not find hash for %s" url
                 return ""
+        | ModuleResolver.SingleSourceFileOrigin.GitLink url ->
+            let result =
+                sprintf "ls-remote %s master" url
+                |> Git.CommandHelper.runSimpleGitCommand ""
+            return result
         | ModuleResolver.SingleSourceFileOrigin.HttpLink _ -> return ""
     }
 

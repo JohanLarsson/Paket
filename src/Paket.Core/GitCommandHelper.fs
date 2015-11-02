@@ -247,6 +247,7 @@ let inline toLines text = separated Environment.NewLine text
 
 /// Runs git.exe with the given command in the given repository directory.
 let runGitCommand repositoryDir command = 
+    failwith gitPath
     let processResult = 
         ExecProcessAndReturnMessages (fun info ->
           info.FileName <- gitPath
