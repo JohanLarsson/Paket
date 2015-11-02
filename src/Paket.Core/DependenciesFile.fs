@@ -199,7 +199,7 @@ module DependenciesFileParser =
     | Redirects of bool
     | ResolverStrategy of ResolverStrategy option
 
-    let private (|Remote|Package|Empty|ParserOptions|SourceFile|Group|) (line:string) =
+    let private (|Remote|Package|Empty|ParserOptions|SourceFile|Git|Group|) (line:string) =
         match line.Trim() with
         | _ when String.IsNullOrWhiteSpace line -> Empty(line)
         | String.StartsWith "source" _ as trimmed -> Remote(PackageSource.Parse(trimmed))
@@ -250,6 +250,8 @@ module DependenciesFileParser =
             SourceFile(parseGitSource trimmed SingleSourceFileOrigin.GistLink "gist")
         | String.StartsWith "github" _ as trimmed  ->
             SourceFile(parseGitSource trimmed SingleSourceFileOrigin.GitHubLink "github")
+        | String.StartsWith "git" _ as trimmed  ->
+            Git(trimmed)
         | String.StartsWith "http" _ as trimmed  ->
             SourceFile(parseHttpSource trimmed)
         | String.StartsWith "//" _ -> Empty(line)
@@ -313,6 +315,9 @@ module DependenciesFileParser =
                     lineNo, { current with Packages = current.Packages @ [package] }::other
                 | SourceFile(origin, (owner,project, commit), path, authKey) ->
                     let remoteFile : UnresolvedSourceFile = { Owner = owner; Project = project; Commit = commit; Name = path; Origin = origin; AuthKey = authKey }
+                    lineNo, { current with RemoteFiles = current.RemoteFiles @ [remoteFile] }::other
+                | Git(url) ->
+                    let remoteFile : UnresolvedSourceFile = { Owner = ""; Project = ""; Commit = None; Name = ""; Origin = SingleSourceFileOrigin.GitLink url; AuthKey = None }
                     lineNo, { current with RemoteFiles = current.RemoteFiles @ [remoteFile] }::other
             with
             | exn -> failwithf "Error in paket.dependencies line %d%s  %s" lineNo Environment.NewLine exn.Message
