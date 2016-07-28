@@ -37,8 +37,6 @@ let TurnOnAutoRestore environment =
         |> List.map fst
         |> List.iter (fun project ->
             let relativePath = createRelativePath project.FileName paketTargetsPath
-            // refreshing project as it can be dirty from call to TurnOffAutoRestore
-            let project = ProjectFile.LoadFromFile(project.FileName)
             project.AddImportForPaketTargets(relativePath)
             project.Save(false)
         )

@@ -964,7 +964,7 @@ module ProjectFile =
 
 
     let save forceTouch project =
-        if Utils.normalizeXml project.Document <> project.OriginalText || not (File.Exists(project.FileName)) then
+        if not (File.Exists(project.FileName)) || Utils.normalizeXml project.Document <> File.ReadAllText project.FileName then
             verbosefn "Project %s changed" project.FileName
             use f = File.Open(project.FileName, FileMode.Create)
             project.Document.Save(f)
